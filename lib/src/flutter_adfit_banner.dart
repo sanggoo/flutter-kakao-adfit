@@ -179,7 +179,7 @@ class _AdFitBannerState extends State<AdFitBanner>
     if (eventData.event != null) {
       switch (eventData.event) {
         case AdFitEvent.AdReceived:
-          Future.delayed(const Duration(milliseconds: 50)).then((_) {
+          Future.delayed(const Duration(milliseconds: 100)).then((_) {
             _loaded = true;
             visible = true;
           });
