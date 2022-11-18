@@ -50,6 +50,8 @@ class _AdFitBannerState extends State<AdFitBanner>
     }
   }
 
+  bool _loaded = false;
+
   @override
   void didUpdateWidget(AdFitBanner oldWidget) {
     if (oldWidget.adId != widget.adId || oldWidget.adSize != widget.adSize) {
@@ -75,17 +77,19 @@ class _AdFitBannerState extends State<AdFitBanner>
         double scale = _getScale(constraint, widget.adSize);
         return Visibility(
             visible: _isVisible,
-            child: (1.0 != scale)
-                ? Container(
-                    alignment: Alignment.center,
-                    width: widget.adSize.width * scale,
-                    height: widget.adSize.height * scale,
-                    child: Transform.scale(
-                      scale: scale,
-                      child: _buildAdView(),
-                    ),
-                  )
-                : _buildAdView());
+            child: Opacity(
+                opacity: _loaded ? 1 : 0,
+                child: (1.0 != scale)
+                    ? Container(
+                        alignment: Alignment.center,
+                        width: widget.adSize.width * scale,
+                        height: widget.adSize.height * scale,
+                        child: Transform.scale(
+                          scale: scale,
+                          child: _buildAdView(),
+                        ),
+                      )
+                    : _buildAdView()));
         if (1.0 < scale) {
           return Container(
             alignment: Alignment.center,
@@ -175,7 +179,10 @@ class _AdFitBannerState extends State<AdFitBanner>
     if (eventData.event != null) {
       switch (eventData.event) {
         case AdFitEvent.AdReceived:
-          visible = true;
+          Future.delayed(const Duration(milliseconds: 50)).then((_) {
+            _loaded = true;
+            visible = true;
+          });
           break;
         case AdFitEvent.AdClicked:
           break;
